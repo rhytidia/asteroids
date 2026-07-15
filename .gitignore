@@ -11,3 +11,6 @@ wheels/
 
 # Mac
 .DS_Store
+
+#logs
+game_state.jsonl
