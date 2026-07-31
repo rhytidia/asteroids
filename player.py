@@ -7,7 +7,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
 
-    def triangle(self) -> list[pygame.Vector2]:
+    def triangle(self) -> list[pygame.Vector2]: # this creates a triangle for the player's ship
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
         a = self.position + forward * self.radius
@@ -15,12 +15,17 @@ class Player(CircleShape):
         c = self.position - forward * self.radius + right
         return [a, b, c]
     
-    def draw(self, screen: pygame.Surface) -> None:
+    def draw(self, screen: pygame.Surface) -> None: # draw the triangle on the screen
         points_list = self.triangle()
         pygame.draw.polygon(screen, "white", points_list, LINE_WIDTH)
 
     def rotate(self, dt: float) -> None:
         self.rotation += PLAYER_TURN_SPEED * dt
+
+    '''For rotate: if you do just rotate(dt) it will rotate clockwise (default).
+    But if you use rotate(-dt) it's like rotation -= SPEED * dt. This
+    means decreasing rotation, so counter-clockwise. move(-dt) similarly
+    moves backwards bc default is forwards.'''
 
     def update(self, dt: float) -> None:
         keys = pygame.key.get_pressed()
@@ -34,7 +39,11 @@ class Player(CircleShape):
             self.move(-dt)
     
     def move(self, dt: float) -> None:
+        # start with unit vector pointed straight down
         unit_vector = pygame.Vector2(0, 1)
+        # rotate it so pointing in same direction as player
         rotated_vector = unit_vector.rotate(self.rotation)
+        # make the vector the length the player should travel in the frame
         rotated_with_speed_vector = rotated_vector * PLAYER_SPEED * dt
+        # add the vector to the player's position to move them
         self.position += rotated_with_speed_vector
